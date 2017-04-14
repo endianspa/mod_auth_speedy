@@ -1,0 +1,46 @@
+
+# Source files.
+SRC=mod_proxy_speedy.c
+
+# Files to include when making a .tar.gz-file for distribution
+DISTFILES=$(SRC) \
+	configure \
+	configure.ac \
+	Makefile.in \
+	autogen.sh \
+	README
+
+all:	mod_proxy_speedy.la
+
+mod_proxy_speedy.la: $(SRC)
+	@APXS2@ -Wc,"-std=c99 @CFLAGS@" -Wl -Wc,-Wall -Wc,-g -c $(SRC)
+
+# Building configure (for distribution)
+configure:	configure.ac
+	./autogen.sh
+
+@NAMEVER@.tar.gz:	 $(DISTFILES)
+	tar -c --transform="s#^#@NAMEVER@/#" -vzf $@ $(DISTFILES)
+
+.PHONY:	install
+install: mod_proxy_speedy.la
+	@APXS2@ -i -n proxy_speedy mod_proxy_speedy.la
+
+.PHONY: distfile
+distfile:	@NAMEVER@.tar.gz
+
+.PHONY:	clean
+clean:
+	rm -f mod_proxy_speedy.la
+	rm -f $(SRC:%.c=%.lo)
+	rm -f $(SRC:%.c=%.slo)
+	rm -rf .libs/
+
+.PHONY:	distclean
+distclean:	clean
+	rm -f Makefile config.log config.status @NAMEVER@.tar.gz *~ \
+	build-stamp config.guess config.sub
+
+.PHONY: fullclean
+fullclean:	distclean
+	rm -f configure aclocal.m4

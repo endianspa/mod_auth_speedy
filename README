@@ -1,0 +1,82 @@
+===========================================================================
+ README file for mod_proxy_speedy
+===========================================================================
+
+mod_proxy_speedy is proxy_module_express protecting + backend protection
+
+This module creates dynamically configured mass reverse proxies, by mapping
+the Host: header of the HTTP request to a server name and backend URL
+stored in a DBM file.
+
+This allows for easy use of a huge number of reverse proxies with no
+configuration changes.
+
+Each backend can be protected with a password.
+
+
+===========================================================================
+ Dependencies
+===========================================================================
+
+mod_proxy_speedy has the following dependencies:
+ * pkg-config
+ * Apache (>=2.0)
+
+You will also require development headers and tools for all of the
+dependencies.
+
+If Apache is installed in a "strange" directory, then you may have to
+specify the path to apxs2 using the --with-apxs2=/full/path/to/apxs2
+option to configure. If, for example, Apache is installed in /opt/apache,
+with apxs2 in /opt/apache/bin, then you run
+
+./configure --with-apxs2=/opt/apache2/bin/apxs2
+
+Note that, depending on your distribution,  apxs2 may be named apxs.
+
+
+===========================================================================
+ Installing mod_proxy_speedy
+===========================================================================
+
+mod_proxy_speedy uses autoconf, and can be installed by running the
+following commands:
+
+./autogen.sh
+./configure
+make
+make install
+
+
+===========================================================================
+ Configuring mod_proxy_speedy
+===========================================================================
+
+Here we are going to assume that your web servers hostname is
+'example.com', and that the directory you are going to protect is
+'http://example.com/secret/'. We are also going to assume that you have
+configured your web site to use SSL.
+
+You need to edit the configuration file for your web server. Depending on
+your distribution, it may be named '/etc/apache/httpd.conf' or something
+different.
+
+
+You need to add a LoadModule directive for mod_proxy_speedy. This will
+look similar to this:
+
+LoadModule proxy_speedy_module /usr/lib/apache2/modules/mod_proxy_speedy.so
+
+To find the full path to mod_proxy_speedy.so, you may run:
+
+apxs2 -q LIBEXECDIR
+
+This will print the path where Apache stores modules. mod_proxy_speedy.so
+will be stored in that directory.
+
+You will also need to make sure that Apache's authn_core module is also
+enabled. Most likely you also want authz_user to be enabled.
+
+After you have added the LoadModule directive, you must add configuration
+for mod_proxy_speedy. The following is an example configuration:
+

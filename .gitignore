@@ -1,0 +1,10 @@
+aclocal.m4
+config.log
+config.status
+configure
+.dir-locals.el
+.libs/
+Makefile
+mod_proxy_speedy.la
+mod_proxy_speedy.lo
+mod_proxy_speedy.slo
